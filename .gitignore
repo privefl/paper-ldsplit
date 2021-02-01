@@ -13,3 +13,4 @@
 *.aux
 *.tex.bak
 *.pdf
+natbib.*
