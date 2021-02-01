@@ -96,9 +96,15 @@
 
 \section*{Implementation}
 
-The problem that is solved here is to optimally split the genome into $K$ blocks, where each block has a bounded number of variants (minimum and maximum).
-This splitting is optimal in the sense that it minimizes the sum of squared correlations between blocks.
-
+We aim at optimally splitting the genome into $K$ blocks, where each block has a bounded number of variants (minimum and maximum).
+This splitting is optimal in the sense that it minimizes the sum of squared correlations between blocks (hereinafter denoted as ``cost'').
+This problem is quite complex, and a naive solution would be exponential with the number of variants.
+To solve this problem efficiently, we use dynamic programming, which consists in breaking a problem into sub-problems and then recursively finding the optimal solutions to the sub-problems.
+Each problem consists in solving
+\begin{equation}
+C(i, k) = \min_j \left(E(i, j) + C(j + 1, k - 1)\right) ~,
+\end{equation}
+where $C(i, k)$ is the minimum cost to split the region from variant $i$ to the last variant into $k$ blocks exactly, and $E(i, j)$ is the error that is added to the cost corresponding to defining variant $j$ as the last variant of the first block of this region.
 
 \section*{Discussion}
 
