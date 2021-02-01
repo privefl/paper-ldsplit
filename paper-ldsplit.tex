@@ -104,7 +104,17 @@ Each problem consists in solving
 \begin{equation}
 C(i, k) = \min_j \left(E(i, j) + C(j + 1, k - 1)\right) ~,
 \end{equation}
-where $C(i, k)$ is the minimum cost to split the region from variant $i$ to the last variant into $k$ blocks exactly, and $E(i, j)$ is the error that is added to the cost corresponding to defining variant $j$ as the last variant of the first block of this region.
+where $C(i, k)$ is the minimum cost to split the region from variant $i$ to the last variant into $k$ blocks exactly, and $E(i, j)$ is the error that is added to the cost corresponding to defining variant $j$ as the last variant of the first block of this region. This is illustrated in figure \ref{fig:illu}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{illu}
+	\caption{Illustration of sub-problems solved by the algorithm using a small LD matrix. The cost of separating the region starting at variant $i$ in $k$ blocks exactly, $C(i, k)$, is broken down in two: the error $E(i,j)$, the sum of all squared correlations between the block $(i,j)$ and all the later blocks, and the cost of separating the rest starting at $j+1$ using $(k-1)$ blocks. The variant $j$ at which the split occurs is chosen so that $\left(E(i, j) + C(j + 1, k - 1)\right)$ is minimized.}
+	\label{fig:illu}
+\end{figure}
+
+These sub-problems can be solved efficiently by starting with $k=1$ and with $i$ from the end of the region.
+Once all costs in the matrix $C$ have been computed, and corresponding splits $j$ have been recorded, the complete set of splits can be reconstructed from $C(1, K)$, where $K$ is the number of blocks desired.
 
 \section*{Discussion}
 
@@ -129,9 +139,7 @@ This research has been conducted using the UK Biobank Resource under Application
 
 F.P. is supported by the Danish National Research Foundation (Niels Bohr Professorship to Prof. John McGrath).
 
-\section*{Declaration of Interests}
-
-The authors declare no competing interests.
+\noindent\textit{Conflict of Interest:} none declared.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
