@@ -14,3 +14,4 @@
 *.tex.bak
 *.pdf
 natbib.*
+tmp-data/
