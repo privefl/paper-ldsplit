@@ -66,11 +66,13 @@ for (pop in c(unique(fam2$`Super Population`), "AFR2")) {
       file = paste0("tmp-data/split_", pop, "_chr", CHR, ".rds")
     )
 
+    # verif
     one_res <- slice_sample(res, n = 1)
     one_cost <- bigsnpr:::compute_cost(one_res$block_num[[1]],
                                        Matrix::tril(corr), THR_R2)
     stopifnot(all.equal(one_cost, one_res$cost, tolerance = 1e-5))
 
+    # return
     bind_cols(
       bind_rows(
         bind_cols(res[1:2], method = "snp_ldsplit"),

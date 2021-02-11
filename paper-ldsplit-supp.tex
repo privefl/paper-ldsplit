@@ -1,0 +1,151 @@
+%% LyX 1.3 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english, 12pt]{article}
+\usepackage{times}
+%\usepackage{algorithm2e}
+\usepackage{url}
+\usepackage{bbm}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{geometry}
+\geometry{verbose,letterpaper,tmargin=2cm,bmargin=2cm,lmargin=1.5cm,rmargin=1.5cm}
+\usepackage{rotating}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{setspace}
+\usepackage{lineno}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{makecell}
+\usepackage{placeins}
+\usepackage{subcaption}
+
+%\renewcommand{\arraystretch}{1.8}
+
+%\linenumbers
+%\doublespacing
+\onehalfspacing
+%\usepackage[authoryear]{natbib}
+\usepackage{natbib} \bibpunct{(}{)}{;}{author-year}{}{,}
+
+%Pour les rajouts
+\usepackage{color}
+\definecolor{trustcolor}{rgb}{0,0,1}
+
+\usepackage{dsfont}
+\usepackage[warn]{textcomp}
+\usepackage{adjustbox}
+\usepackage{multirow}
+\usepackage{subcaption}
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\DeclareMathOperator*{\argmin}{\arg\!\min}
+
+\let\tabbeg\tabular
+\let\tabend\endtabular
+\renewenvironment{tabular}{\begin{adjustbox}{max width=0.95\textwidth}\tabbeg}{\tabend\end{adjustbox}}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Bold symbol macro for standard LaTeX users
+%\newcommand{\boldsymbol}[1]{\mbox{\boldmath $#1$}}
+
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+\renewcommand*{\arraystretch}{1.2}
+
+\usepackage{babel}
+\makeatother
+
+
+\begin{document}
+
+\renewcommand{\thefigure}{S\arabic{figure}}
+\setcounter{figure}{0}
+\renewcommand{\thetable}{S\arabic{table}}
+\setcounter{table}{0}
+\renewcommand{\theequation}{S\arabic{equation}}
+\setcounter{equation}{0}
+
+\section*{Supplementary Materials}
+
+\vspace{5em}
+
+\subsection*{Procedure to compute optimal costs}
+
+We use the 1000 Genomes (1000G) data in the `.bed' PLINK format provided in \cite{prive2020efficient}, and composed of 2490 individuals and 1,664,852 variants.
+In turn, for individuals in each of the five super populations from the 1000G data, we compute the correlation between variants with $\text{MAF} > 0.05$ using function \texttt{snp\_cor} from R package bigsnpr \cite[]{prive2017efficient}, assuming that correlations between variants more than 3 cM away are 0 \cite[]{prive2020ldpred2}.
+Then, optimal splits are computed using function \texttt{snp\_ldsplit} introduced in this paper.
+These costs are compared with the costs provided by ldetect \cite[]{berisa2016approximately} for the European and African populations only since they are not provided for the other three super-populations.
+Results are presented in figures \ref{fig:costEUR}-\ref{fig:costAMR}. 
+We see that splitting costs are very high for the admixed Americans group, showing that is impossible to split LD in independent blocks in an admixed population.
+This is also the case, to a lesser extent, for the African (AFR) group which includes African Americans (ASW) and African Caribbeans (ACB) who may be admixed with e.g.\ European ancestry.
+When excluding 5\% of AFR individuals based on principal component analysis, splitting costs are reduced (Figure \ref{fig:costAFR2}).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{figure}[p]
+\centerline{\includegraphics[width=0.95\textwidth]{cost_split_EUR}}
+\caption{Optimal costs of splitting chromosomes (each panel) in a specified number of blocks (including 500 variants at minimum and 10,000 at maximum) for the European (\textbf{EUR}) super-population in the 1000 Genomes data.
+The cost is defined as the sum of squared correlations $r^2$ between variants from different blocks, restricting to all $r^2 > 0.05$.
+In red is the code from the split from ldetect, accessed from \url{https://bitbucket.org/nygcresearch/ldetect-data/src/master/EUR/}.}
+\label{fig:costEUR}
+\end{figure}
+
+
+\begin{figure}[p]
+\centerline{\includegraphics[width=0.95\textwidth]{cost_split_EAS}}
+\caption{Optimal costs of splitting chromosomes (each panel) in a specified number of blocks (including 500 variants at minimum and 10,000 at maximum) for the East Asian (\textbf{EAS}) super-population in the 1000 Genomes data.
+The cost is defined as the sum of squared correlations $r^2$ between variants from different blocks, restricting to all $r^2 > 0.05$.}
+\label{fig:costEAS}
+\end{figure}
+
+
+\begin{figure}[p]
+\centerline{\includegraphics[width=0.95\textwidth]{cost_split_SAS}}
+\caption{Optimal costs of splitting chromosomes (each panel) in a specified number of blocks (including 500 variants at minimum and 10,000 at maximum) for the South Asian (\textbf{SAS}) super-population in the 1000 Genomes data.
+The cost is defined as the sum of squared correlations $r^2$ between variants from different blocks, restricting to all $r^2 > 0.05$.}
+\label{fig:costSAS}
+\end{figure}
+
+
+\begin{figure}[p]
+\centerline{\includegraphics[width=0.95\textwidth]{cost_split_AFR}}
+\caption{Optimal costs of splitting chromosomes (each panel) in a specified number of blocks (including 500 variants at minimum and 10,000 at maximum) for the African (\textbf{AFR}) super-population in the 1000 Genomes data.
+The cost is defined as the sum of squared correlations $r^2$ between variants from different blocks, restricting to all $r^2 > 0.05$.
+In red is the code from the split from ldetect, accessed from \url{https://bitbucket.org/nygcresearch/ldetect-data/src/master/AFR/}.
+Here, for the same number of blocks, the cost using ldetect can be smaller than the one with our optimal splitting since we have an additional restriction that blocks should contain at least 500 variants.}
+\label{fig:costAFR}
+\end{figure}
+
+
+\begin{figure}[p]
+\centerline{\includegraphics[width=0.95\textwidth]{cost_split_AMR}}
+\caption{Optimal costs of splitting chromosomes (each panel) in a specified number of blocks (including 500 variants at minimum and 10,000 at maximum) for the Admixed American (\textbf{AMR}) super-population in the 1000 Genomes data.
+The cost is defined as the sum of squared correlations $r^2$ between variants from different blocks, restricting to all $r^2 > 0.05$.}
+\label{fig:costAMR}
+\end{figure}
+
+\begin{figure}[p]
+	\centerline{\includegraphics[width=0.95\textwidth]{cost_split_AFR2}}
+	\caption{Same as figure \ref{fig:costAFR}, but after excluding 5\% of AFR individuals based on PCA.}
+	\label{fig:costAFR2}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\FloatBarrier
+%\clearpage
+
+\bibliographystyle{natbib}
+\bibliography{refs}
+
+\end{document}

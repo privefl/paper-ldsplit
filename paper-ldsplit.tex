@@ -22,7 +22,7 @@
 \renewcommand{\arraystretch}{1.3}
 
 \usepackage{xr}
-\externaldocument{240pgs-supp}
+\externaldocument{paper-ldsplit-supp}
 
 %\linenumbers
 %\doublespacing
@@ -99,60 +99,53 @@ A few algorithms have been developed for splitting the genome in nearly independ
 Dividing the genome in multiple smaller blocks has many applications.
 One application is to report signals from independent regions of the genome \cite[]{berisa2016approximately, wen2017integrating,ruderfer2018genomic}.
 Another application is for the development of statistical methods, e.g.\ for deriving polygenic scores \cite[]{mak2017polygenic,ge2019polygenic,zhou2020fast}, estimating genetic architecture and performing other statistical genetics analyses \cite[]{shi2016contrasting,wen2016efficient}.
-Indeed, most statistical methods based on summary statistics also use a correlation matrix, and these methods often perform expensive operations such as inversion and eigen decomposition of this correlation matrix.
-However, if we can decompose the correlation matrix in nearly independent blocks, then we can apply these expensive operations to a smaller matrix, making them much faster. 
-For instance, inverting a block-diagonal matrix requires only inverting each block separately, and also allows parallelizing over blocks.
+Indeed, most statistical methods based on summary statistics also use a correlation matrix (between variants), and these methods often perform computationally expensive operations such as inversion and eigen decomposition of this correlation matrix. These operations are often quadratic, cubic or even exponential with the number of variants.
+However, if we can decompose the correlation matrix in nearly independent blocks, then we can apply these expensive operations to smaller matrices with less variants, making these operations much faster, and parallelisable. 
+For instance, inverting a block-diagonal matrix requires only inverting each block separately.
 
 \section*{Implementation}
 
 We aim at optimally splitting the genome into $K$ blocks, where each block has a bounded number of variants (minimum and maximum size).
-This splitting is optimal in the sense that it minimizes the sum of squared correlations between blocks (hereinafter denoted as ``cost'').
+This splitting is optimal in the sense that it minimizes the sum of squared correlations between variants from different blocks (hereinafter denoted as ``cost'').
 This problem is quite complex, and a naive solution would be exponential with the number of variants.
 To solve this problem efficiently, we use dynamic programming, which consists in breaking a problem into sub-problems and then recursively finding the optimal solutions to the sub-problems.
 Here, each sub-problem consists in solving
 \begin{equation}
-C(i, k) = \min_j \left(E(i, j) + C(j + 1, k - 1)\right) ~,
+C(i, k) = \min_j \left\lbrace E(i, j) + C(j + 1, k - 1) \right\rbrace ~,
 \end{equation}
-where $C(i, k)$ is the minimum cost for splitting the region from variant $i$ to the last variant into $k$ blocks exactly, and $E(i, j)$ is the missed correlation between block $(i, j)$ and the latter bloks. This is illustrated in figure \ref{fig:illu}.
+where $C(i, k)$ is the minimum cost for splitting the region from variant $i$ to the last variant into $k$ blocks exactly, and $E(i, j)$ is the error / cost between block $(i, j)$ and the latter bloks. This is illustrated in figure \ref{fig:illu}.
 These sub-problems can be solved efficiently by starting with $k=1$ and with $i$ from the end of the region, and working our way up.
-Once all costs in the matrix $C$ have been computed, and corresponding splits $j$ have been recorded, the complete set of splits can be reconstructed from $C(1, K)$, where $K$ is the number of blocks desired.
+Once all costs in the $C$ matrix have been computed, and corresponding splits $j$ have been recorded, the optimal split can be reconstructed from $C(1, K)$, where $K$ is the number of blocks desired.
 To efficiently compute $E(i,j) = \sum_{p=i}^j \sum_{q=j+1}^m R(p, q)^2$, where $m$ is the number of variants and $R(p, q)$ is the correlation between variants $p$ and $q$, we first compute the matrix $L$ defined as $L(i, j) = \sum_{q=j+1}^m R(i, q)^2$. Matrices $L$ and $E$ are sparse.
-$E$ is the largest matrix and requires approximately $m \times (\text{max\_size} - \text{min\_size}) \times 4$ bytes to be stored. For $m$=100,000, min\_size=1000 and max\_size=10,000, this represents 3.4 GB.
+$E$ is the largest matrix and requires approximately $m \times (\text{max\_size} - \text{min\_size}) \times 4$ bytes to be stored efficiently. For $m$=100,000, min\_size=500 and max\_size=10,000, this represents 3.5 GB.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\textwidth]{illu}
-	\caption{Illustration of sub-problems solved by the algorithm using a small LD matrix. The cost of separating the region starting at variant $i$ in $k$ blocks exactly, $C(i, k)$, is broken down in two: the error $E(i,j)$, the sum of all squared correlations between the block $(i,j)$ and all the later blocks, and the cost of separating the rest starting at $(j+1)$ using $(k-1)$ blocks. The variant $j$ at which the split occurs is chosen so that the cost $\left(E(i, j) + C(j + 1, k - 1)\right)$ is minimized.}
+	\caption{Illustration of sub-problems solved by the algorithm using a small LD matrix. The cost of separating the region starting at variant $i$ in $k$ blocks exactly, $C(i, k)$, is broken down in two: the error $E(i,j)$, the sum of all squared correlations between variants from block $(i,j)$ and variants from all the later blocks, and the cost of separating the rest starting at $(j+1)$ using $(k-1)$ blocks. The variant $j$ at which the split occurs is chosen so that the cost $\left(E(i, j) + C(j + 1, k - 1)\right)$ is minimized.}
 	\label{fig:illu}
 \end{figure}
 
 \section*{Results}
 
-As input, function \texttt{snp\_ldsplit} uses a pre-computed correlation matrix in sparse format from R package Matrix, which can be computed using the available \texttt{snp\_cor} function from R package bigsnpr \cite[]{prive2017efficient}. This function is fast and parallelized.
-Then, to run \texttt{snp\_ldsplit} using a correlation matrix for 51,492 variants from chromosome 12, it takes 30 seconds on a laptop and less than 3 GB of memory to find the optimal split in $K$ blocks (for all $K=1$ to 50) with a bounded block size between 500 and 10,000 variants.
-Memory and computation time are proportional to the number of variants and the maximum size allowed for blocks (in number of variants), making this algorithm scalable.
-Then, the user can choose the desired number of blocks, which is a compromise between a reduced size of the blocks when using more blocks and an increased ``cost'', since splitting a chromosome in more blocks would increase the correlation outside of these blocks.
-
-[COST TO GET 1703 REGIONS? WHY SHOULD PEOPLE SWITCH?]
-
-\section*{Discussion}
-
-DISCUSS ABOUT HYPER-PARAMETERS
-
+As input, function \texttt{snp\_ldsplit} uses a correlation matrix in sparse format from R package Matrix, which can be computed using the available \texttt{snp\_cor} function from R package bigsnpr \cite[]{prive2017efficient}. This function is fast and parallelized.
+Then, to run \texttt{snp\_ldsplit} using a correlation matrix for 102,451 variants from chromosome 1, it takes < 6 minutes on a laptop to find the optimal split in $K$ blocks (for all $K=1$ to 133) with a bounded block size between 500 and 10,000 variants.
+Then, the user can choose the desired number of blocks, which is a compromise between a reduced size of the blocks when using more blocks and an increased cost, since splitting a chromosome in more blocks would increase the correlation outside of these blocks.
+For chromosome 1 and Europeans, ldetect report 133 LD blocks \cite[]{berisa2016approximately}, however we find that they can hardly be considered truly independent given the high cost (10,600) of the corresponding split (Figure \ref{fig:costEUR}).
+When splitting chromosome 1 for Europeans using the optimal algorithm we propose here, it can be split in 39 blocks at a cost of 1, in 65 blocks at a cost of 10, and in 133 blocks at a cost of 296 (Figure \ref{fig:costEUR}). Similar results are found for other chromosomes, and for Africans and Asians, however splitting the LD from admixed Americans comes at a high cost (Figures \ref{fig:costEAS}-\ref{fig:costAMR})
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %\clearpage
 %\vspace*{5em}
 
-%\section*{Software and code availability}
+\section*{Software and code availability}
 
-%All code used for this paper is available at \url{https://github.com/privefl/UKBB-PGS/tree/master/code}. 
+The newest version of R package bigsnpr can be installed from GitHub (see \url{https://github.com/privefl/bigsnpr}).
+All code used for this paper is available at \url{https://github.com/privefl/paper-ldsplit/tree/master/code}. 
+
 
 %\section*{Acknowledgements}
-%
-%Authors thank GenomeDK and Aarhus University for providing computational resources and support that contributed to these research results.
-%This research has been conducted using the UK Biobank Resource under Application Number 58024.
 
 \section*{Funding}
 
