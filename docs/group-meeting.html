@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>LD Blocks</title>
+    <meta charset="utf-8" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+class: title-slide center middle inverse
+
+## Optimal Linkage Disequilibrium Splitting
+
+[preprint on bioRxiv](https://doi.org/10.1101/2021.02.11.430793)
+
+&lt;br&gt;
+
+### Florian Privé
+
+---
+
+class: center middle inverse
+
+# Introduction
+
+---
+
+### Current SotA
+
+&lt;br&gt;
+
+A few algorithms have been developed for splitting the genome in nearly independent blocks of linkage disequilibrium. 
+
+Due to the complexity of this problem, these algorithms rely on **heuristics**, which makes them sub-optimal. 
+
+The splitting that seems the most used is [the 1703 regions provided by *LDetect*](https://bitbucket.org/nygcresearch/ldetect-data/src/master/EUR/fourier_ls-all.bed) in [Berisa &amp; Pickrell, *Bioinformatics* (2016)](https://doi.org/10.1093/bioinformatics/btv546). 
+
+---
+
+### Motivation
+
+&lt;br&gt;
+
+There are a number of applications to these LD blocks:
+
+- report signals from independent regions of the genome, or parameters (e.g. `\(h^2\)`, `\(p\)`, `\(r_G\)`)
+
+- make computations easier faster in statistical methods, e.g. requiring computationally intensive operations such as eigen decomposition or inversion of the LD matrix; remember e.g. that inverting a block diagonal matrix requires only inverting each block separately
+
+- as a form of regularization
+
+
+
+---
+
+### Methods that already use the 1703 blocks
+
+&lt;br&gt;
+
+- for polygenic scores:
+
+    - [lassosum](https://doi.org/10.1002/gepi.22050) (otherwise exponential with number of variants)
+    
+    - [PRS-CS](https://doi.org/10.1038/s41467-019-09718-5) (requires inverting each LD block, `\(O(m^{2.4})\)`)
+    
+    - [SDPR](https://doi.org/10.1101/2020.11.30.405241) (same, but they have their own heuristic for defining blocks)
+    
+--
+    
+- for estimating local SNP heritability:
+
+    - [HESS](https://dx.doi.org/10.1016%2Fj.ajhg.2016.05.013) (performs eigen decomposition of each LD block, `\(O(m^3)\)`)
+    
+--
+    
+- for power improvement in GWAS using functional annotations:
+
+    - [DAP](https://dx.doi.org/10.1016%2Fj.ajhg.2016.03.029) (performs complex operations per block)
+
+
+---
+
+class: center middle inverse
+
+# Methods
+
+---
+
+### Algorithm for optimal LD splitting
+
+This splitting is **optimal** in the sense that it minimizes the sum of squared correlations between variants from different blocks (hereinafter denoted as ``cost'').
+
+This problem is quite complex, and a naive implementation would be exponential with the number of variants.
+
+To solve this problem efficiently, we use **dynamic programming**, which consists in breaking a problem into sub-problems and then recursively finding the optimal solutions to the sub-problems.
+
+Here, each sub-problem consists in solving
+`$$C(i, k) = \min_j \left\lbrace E(i, j) + C(j + 1, k - 1) \right\rbrace ~,$$`
+where `\(C(i, k)\)` is the minimum cost for splitting the region from variant `\(i\)` to the last variant into `\(k\)` blocks exactly, and `\(E(i, j)\)` is the error / cost between block `\((i, j)\)` and the latter blocks.
+
+---
+
+### Illustration of the algorithm
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="figures/illu-1.png" alt="\(C(i, k) = \min_j \left\lbrace E(i, j) + C(j + 1, k - 1) \right\rbrace\)" width="68%" /&gt;
+&lt;p class="caption"&gt;\(C(i, k) = \min_j \left\lbrace E(i, j) + C(j + 1, k - 1) \right\rbrace\)&lt;/p&gt;
+&lt;/div&gt;
+
+---
+
+class: center middle inverse
+
+# Results
+
+---
+
+---
+
+class: center middle inverse
+
+# That's all folks!
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
