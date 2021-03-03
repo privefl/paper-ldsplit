@@ -79,10 +79,7 @@
 \vspace*{3em}
 
 \abstract{
-	A few algorithms have been developed for splitting the genome in nearly independent blocks of linkage disequilibrium.
-	Due to the complexity of this problem, these algorithms rely on heuristics, which makes them sub-optimal.
-	Here we develop an optimal solution for this problem using dynamic programming.
-	This is now implemented as function \texttt{snp\_ldplit} as part of R package bigsnpr.
+	A few algorithms have been developed for splitting the genome in nearly independent blocks of linkage disequilibrium. Due to the complexity of this problem, these algorithms rely on heuristics, which makes them sub-optimal. Here we develop an optimal solution for this problem using dynamic programming. This is now implemented as function \texttt{snp\_ldplit} as part of R package bigsnpr.
 }
 
 
@@ -100,20 +97,20 @@ Dividing the genome in multiple smaller blocks has many applications.
 One application is to report signals from independent regions of the genome \cite[]{berisa2016approximately, wen2017integrating,ruderfer2018genomic}.
 Another application is for the development of statistical methods, e.g.\ for deriving polygenic scores \cite[]{mak2017polygenic,ge2019polygenic,zhou2020fast}, estimating genetic architecture and performing other statistical genetics analyses \cite[]{shi2016contrasting,wen2016efficient}.
 Indeed, most statistical methods based on summary statistics also use a correlation matrix (between variants), and these methods often perform computationally expensive operations such as inversion and eigen decomposition of this correlation matrix. These operations are often quadratic, cubic or even exponential with the number of variants.
-However, if we can decompose the correlation matrix in nearly independent blocks, then we can apply these expensive operations to smaller matrices with less variants, making these operations much faster, and parallelisable. 
+However, if we can decompose the correlation matrix in nearly independent blocks, then we can apply these expensive operations to smaller matrices with less variants, making these operations much faster, and parallelisable.
 For instance, inverting a block-diagonal matrix requires only inverting each block separately.
 
 \section*{Implementation}
 
 We aim at optimally splitting the genome into $K$ blocks, where each block has a bounded number of variants (minimum and maximum size).
 This splitting is optimal in the sense that it minimizes the sum of squared correlations between variants from different blocks (hereinafter denoted as ``cost'').
-This problem is quite complex, and a naive solution would be exponential with the number of variants.
+This problem is quite complex, and a naive implementation would be exponential with the number of variants.
 To solve this problem efficiently, we use dynamic programming, which consists in breaking a problem into sub-problems and then recursively finding the optimal solutions to the sub-problems.
 Here, each sub-problem consists in solving
 \begin{equation}
 C(i, k) = \min_j \left\lbrace E(i, j) + C(j + 1, k - 1) \right\rbrace ~,
 \end{equation}
-where $C(i, k)$ is the minimum cost for splitting the region from variant $i$ to the last variant into $k$ blocks exactly, and $E(i, j)$ is the error / cost between block $(i, j)$ and the latter bloks. This is illustrated in figure \ref{fig:illu}.
+where $C(i, k)$ is the minimum cost for splitting the region from variant $i$ to the last variant into $k$ blocks exactly, and $E(i, j)$ is the error / cost between block $(i, j)$ and the latter blocks. This is illustrated in figure \ref{fig:illu}.
 These sub-problems can be solved efficiently by starting with $k=1$ and with $i$ from the end of the region, and working our way up.
 Once all costs in the $C$ matrix have been computed, and corresponding splits $j$ have been recorded, the optimal split can be reconstructed from $C(1, K)$, where $K$ is the number of blocks desired.
 To efficiently compute $E(i,j) = \sum_{p=i}^j \sum_{q=j+1}^m R(p, q)^2$, where $m$ is the number of variants and $R(p, q)$ is the correlation between variants $p$ and $q$, we first compute the matrix $L$ defined as $L(i, j) = \sum_{q=j+1}^m R(i, q)^2$. Matrices $L$ and $E$ are sparse.
@@ -142,7 +139,7 @@ When splitting chromosome 1 for Europeans using the optimal algorithm we propose
 \section*{Software and code availability}
 
 The newest version of R package bigsnpr can be installed from GitHub (see \url{https://github.com/privefl/bigsnpr}).
-All code used for this paper is available at \url{https://github.com/privefl/paper-ldsplit/tree/master/code}. 
+All code used for this paper is available at \url{https://github.com/privefl/paper-ldsplit/tree/master/code}.
 
 
 %\section*{Acknowledgements}
