@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
   <head>
     <title>LD Blocks</title>
     <meta charset="utf-8" />
@@ -96,9 +96,13 @@ class: center middle inverse
 
 This splitting is **optimal** in the sense that it minimizes the sum of squared correlations between variants from different blocks (hereinafter denoted as ``cost'').
 
+--
+
 This problem is quite complex, and a naive implementation would be exponential with the number of variants.
 
 To solve this problem efficiently, we use **dynamic programming**, which consists in breaking a problem into sub-problems and then recursively finding the optimal solutions to the sub-problems.
+
+--
 
 Here, each sub-problem consists in solving
 `$$C(i, k) = \min_j \left\lbrace E(i, j) + C(j + 1, k - 1) \right\rbrace ~,$$`
@@ -112,6 +116,19 @@ where `\(C(i, k)\)` is the minimum cost for splitting the region from variant `\
 &lt;img src="figures/illu-1.png" alt="\(C(i, k) = \min_j \left\lbrace E(i, j) + C(j + 1, k - 1) \right\rbrace\)" width="68%" /&gt;
 &lt;p class="caption"&gt;\(C(i, k) = \min_j \left\lbrace E(i, j) + C(j + 1, k - 1) \right\rbrace\)&lt;/p&gt;
 &lt;/div&gt;
+
+---
+
+### Construction of the solution
+
+These sub-problems can be solved efficiently by starting with `\(k=1\)` block and with `\(i\)` from the end of the region, and working our way up.
+
+Once all costs in the `\(C\)` matrix have been computed, and corresponding splits `\(j\)` have been recorded, the optimal split can be reconstructed from `\(C(1, K)\)`, where `\(K\)` is the number of blocks desired:
+
+  - which is the `\(j_1\)` corresponding to `\(C(1, K)\)`?
+  - which is the `\(j_2\)` corresponding to `\(C(j_1+1, K-1)\)`?
+  - which is the `\(j_3\)` corresponding to `\(C(j_2+1, K-2)\)`?
+  - etc until reach the end, then `\(j_1, j_2, j_3, \ldots, j_K\)` are the last elements of each block.
 
 ---
 
@@ -173,6 +190,32 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
 // adds .remark-code-has-line-highlighted class to <pre> parent elements
 // of code chunks containing highlighted lines with class .remark-code-line-highlighted
 (function(d) {
@@ -190,17 +233,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   }
   preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
 })(document);</script>
-
-<script>
-(function() {
-  var links = document.getElementsByTagName('a');
-  for (var i = 0; i < links.length; i++) {
-    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
-      links[i].target = '_blank';
-    }
-  }
-})();
-</script>
 
 <script>
 slideshow._releaseMath = function(el) {

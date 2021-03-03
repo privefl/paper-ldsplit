@@ -98,9 +98,13 @@ class: center middle inverse
 
 This splitting is **optimal** in the sense that it minimizes the sum of squared correlations between variants from different blocks (hereinafter denoted as ``cost'').
 
+--
+
 This problem is quite complex, and a naive implementation would be exponential with the number of variants.
 
 To solve this problem efficiently, we use **dynamic programming**, which consists in breaking a problem into sub-problems and then recursively finding the optimal solutions to the sub-problems.
+
+--
 
 Here, each sub-problem consists in solving
 $$C(i, k) = \min_j \left\lbrace E(i, j) + C(j + 1, k - 1) \right\rbrace ~,$$
@@ -113,6 +117,19 @@ where $C(i, k)$ is the minimum cost for splitting the region from variant $i$ to
 ```{r, out.width="68%", fig.cap="\\(C(i, k) = \\min_j \\left\\lbrace E(i, j) + C(j + 1, k - 1) \\right\\rbrace\\)"}
 knitr::include_graphics("figures/illu-1.png")
 ```
+
+---
+
+### Construction of the solution
+
+These sub-problems can be solved efficiently by starting with $k=1$ block and with $i$ from the end of the region, and working our way up.
+
+Once all costs in the $C$ matrix have been computed, and corresponding splits $j$ have been recorded, the optimal split can be reconstructed from $C(1, K)$, where $K$ is the number of blocks desired:
+
+  - which is the $j_1$ corresponding to $C(1, K)$?
+  - which is the $j_2$ corresponding to $C(j_1+1, K-1)$?
+  - which is the $j_3$ corresponding to $C(j_2+1, K-2)$?
+  - etc until reach the end, then $j_1, j_2, j_3, \ldots, j_K$ are the last elements of each block.
 
 ---
 
