@@ -94,7 +94,7 @@ class: center middle inverse
 
 ### Algorithm for optimal LD splitting
 
-This splitting is **optimal** in the sense that it minimizes the sum of squared correlations between variants from different blocks (hereinafter denoted as ``cost'').
+This splitting is **optimal** in the sense that it minimizes the sum of squared correlations between variants from different blocks (hereinafter denoted as "cost").
 
 --
 
@@ -125,10 +125,15 @@ These sub-problems can be solved efficiently by starting with `\(k=1\)` block an
 
 Once all costs in the `\(C\)` matrix have been computed, and corresponding splits `\(j\)` have been recorded, the optimal split can be reconstructed from `\(C(1, K)\)`, where `\(K\)` is the number of blocks desired:
 
-  - which is the `\(j_1\)` corresponding to `\(C(1, K)\)`?
-  - which is the `\(j_2\)` corresponding to `\(C(j_1+1, K-1)\)`?
-  - which is the `\(j_3\)` corresponding to `\(C(j_2+1, K-2)\)`?
-  - etc until reach the end, then `\(j_1, j_2, j_3, \ldots, j_K\)` are the last elements of each block.
+  - pick the `\(j_1\)` corresponding to `\(C(1, K)\)`
+  
+  - pick the `\(j_2\)` corresponding to `\(C(j_1+1, K-1)\)`
+  
+  - pick the `\(j_3\)` corresponding to `\(C(j_2+1, K-2)\)`
+  
+  - etc, until you reach the end
+  
+Then `\(j_1, j_2, j_3, \ldots, j_K\)` are the last elements of each block.
 
 ---
 
@@ -137,6 +142,44 @@ class: center middle inverse
 # Results
 
 ---
+
+### Comparing LDetect with bigsnpr::snp_ldsplit()
+
+&lt;img src="figures/ldblocks.jpg" width="95%" style="display: block; margin: auto;" /&gt;
+
+---
+
+class: center middle inverse
+
+# What to do with this?
+
+---
+
+### Possibilities
+
+&lt;br&gt;
+
+The initial aim was to try publishing this quickly as a small Application Note in *Bioinformatics*.
+
+--
+
+&lt;br&gt;
+
+But I was contacted by Jacob Ulirsch, a PhD student with Hilary Finucane.
+
+They have been interested in doing something similar to improve some methods that are using less optimal LD blocks. 
+
+--
+
+&lt;br&gt;
+
+So, then, what should I do?
+
+- still try to publish this myself, and try to collaborate with them improving methods showing that these blocks are much better (other than just because of the lower "cost")?
+
+- collaborate with them, and integrate this as part of a larger paper?
+
+- also what number of blocks should be chosen? (tradeoff with cost)
 
 ---
 
