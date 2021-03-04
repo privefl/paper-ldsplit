@@ -53,9 +53,9 @@ There are a number of applications to these LD blocks:
 
 - report signals from independent regions of the genome, or parameters (e.g. $h^2$, $p$, $r_G$)
 
-- make computations easier faster in statistical methods, e.g. requiring computationally intensive operations such as eigen decomposition or inversion of the LD matrix; remember e.g. that inverting a block diagonal matrix requires only inverting each block separately
+- make computations less demanding (in both memory and time) for some statistical methods, e.g. when requiring computationally intensive operations such as eigen decomposition or inversion of the LD matrix; remember e.g. that inverting a block diagonal matrix requires only inverting each block separately
 
-- as a form of regularization
+- as a form of regularization or de-noising
 
 
 
@@ -67,7 +67,7 @@ There are a number of applications to these LD blocks:
 
 - for polygenic scores:
 
-    - [lassosum](https://doi.org/10.1002/gepi.22050) (otherwise exponential with number of variants)
+    - [lassosum](https://doi.org/10.1002/gepi.22050) (otherwise $O(\exp(m))$)
     
     - [PRS-CS](https://doi.org/10.1038/s41467-019-09718-5) (requires inverting each LD block, $O(m^{2.4})$)
     
@@ -96,6 +96,8 @@ class: center middle inverse
 
 ### Algorithm for optimal LD splitting
 
+<br>
+
 This splitting is **optimal** in the sense that it minimizes the sum of squared correlations between variants from different blocks (hereinafter denoted as "cost").
 
 --
@@ -112,7 +114,7 @@ where $C(i, k)$ is the minimum cost for splitting the region from variant $i$ to
 
 ---
 
-### Illustration of the algorithm
+### Illustration of the sub-problem
 
 ```{r, out.width="68%", fig.cap="\\(C(i, k) = \\min_j \\left\\lbrace E(i, j) + C(j + 1, k - 1) \\right\\rbrace\\)"}
 knitr::include_graphics("figures/illu-1.png")
@@ -121,6 +123,8 @@ knitr::include_graphics("figures/illu-1.png")
 ---
 
 ### Construction of the solution
+
+<br>
 
 These sub-problems can be solved efficiently by starting with $k=1$ block and with $i$ from the end of the region, and working our way up.
 
