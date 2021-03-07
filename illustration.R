@@ -32,3 +32,4 @@ ggplot(df2, aes(i, j)) +
                linetype = 3, color = c("blue", "red"), arrow = arrow())
 
 ggsave("illu.pdf", width = 6, height = 5.5)
+ggsave("illu.png", width = 6, height = 5.5)

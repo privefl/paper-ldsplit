@@ -66,7 +66,7 @@
 \begin{document}
 
 
-\title{Application Note:\\Optimal Linkage Disequilibrium Splitting}
+\title{Optimal Linkage Disequilibrium Splitting}
 \author{Florian Priv\'e$^{\text{1}}$}
 
 \date{~ }
@@ -118,7 +118,7 @@ $E$ is the largest matrix and requires approximately $m \times (\text{max\_size}
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\textwidth]{illu}
+	\includegraphics[width=0.8\textwidth]{illu.png}
 	\caption{Illustration of sub-problems solved by the algorithm using a small LD matrix. The cost of separating the region starting at variant $i$ in $k$ blocks exactly, $C(i, k)$, is broken down in two: the error $E(i,j)$, the sum of all squared correlations between variants from block $(i,j)$ and variants from all the later blocks, and the cost of separating the rest starting at $(j+1)$ using $(k-1)$ blocks. The variant $j$ at which the split occurs is chosen so that the cost $\left(E(i, j) + C(j + 1, k - 1)\right)$ is minimized.}
 	\label{fig:illu}
 \end{figure}
