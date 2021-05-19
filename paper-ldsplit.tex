@@ -106,6 +106,7 @@ We aim at optimally splitting the genome into $K$ blocks, where each block has a
 This splitting is optimal in the sense that it minimizes the sum of squared correlations between variants from different blocks (hereinafter denoted as ``cost'').
 This problem is quite complex, and a naive implementation would be exponential with the number of variants.
 To solve this problem efficiently, we use dynamic programming, which consists in breaking a problem into sub-problems and then recursively finding the optimal solutions to the sub-problems.
+Dynamic programming has been successfully used before to solve related problems such as haplotype block partitioning \cite[]{zhang2002dynamic}.
 Here, each sub-problem consists in solving
 \begin{equation}
 C(i, k) = \min_j \left\lbrace E(i, j) + C(j + 1, k - 1) \right\rbrace ~,
@@ -119,7 +120,7 @@ $E$ is the largest matrix and requires approximately $m \times (\text{max\_size}
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\textwidth]{illu.png}
-	\caption{Illustration of sub-problems solved by the algorithm using a small LD matrix. The cost of separating the region starting at variant $i$ in $k$ blocks exactly, $C(i, k)$, is broken down in two: the error $E(i,j)$, the sum of all squared correlations between variants from block $(i,j)$ and variants from all the later blocks, and the cost of separating the rest starting at $(j+1)$ using $(k-1)$ blocks. The variant $j$ at which the split occurs is chosen so that the cost $\left(E(i, j) + C(j + 1, k - 1)\right)$ is minimized.}
+	\caption{Illustration of sub-problems solved by the algorithm using a small LD matrix. The cost of separating the region starting at variant $i$ in $k$ blocks exactly, $C(i, k)$, is broken down in two: the error $E(i,j)$, the sum of all squared correlations between variants from block $(i,j)$ and variants from all the later blocks, and the cost of separating the rest starting at $(j+1)$ using $(k-1)$ blocks. The variant $j$ at which the split occurs is chosen so that the cost $\left(E(i, j) + C(j + 1, k - 1)\right)$ is minimized. The optimal split is highlighted in red here.}
 	\label{fig:illu}
 \end{figure}
 
