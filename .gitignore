@@ -15,3 +15,5 @@
 *.pdf
 natbib.*
 tmp-data/
+map_blocks.rds
+results_ldsc/
