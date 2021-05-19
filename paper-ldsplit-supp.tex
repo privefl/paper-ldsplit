@@ -77,7 +77,8 @@
 
 We use the 1000 Genomes (1000G) data in the `.bed' PLINK format provided in \cite{prive2020efficient}, and composed of 2490 individuals and 1,664,852 variants.
 In turn, for individuals in each of the five super populations from the 1000G data, we compute the correlation between variants with $\text{MAF} > 0.05$ using function \texttt{snp\_cor} from R package bigsnpr \cite[]{prive2017efficient}, assuming that correlations between variants more than 3 cM away are 0 \cite[]{prive2020ldpred2}.
-Then, optimal splits are computed using function \texttt{snp\_ldsplit} introduced in this paper.
+Then, optimal splits are computed using function \texttt{snp\_ldsplit} introduced in this paper,
+setting parameters \texttt{thr\_r2 = 0.05}, \texttt{min\_size = 500}, and \texttt{max\_size = 10000}.
 These costs are compared with the costs provided by ldetect \cite[]{berisa2016approximately} for the European and African populations only since they are not provided for the other three super-populations.
 Results are presented in figures \ref{fig:costEUR}-\ref{fig:costAMR}. 
 We see that splitting costs are very high for the admixed Americans group, showing that it is impossible to split LD in independent blocks in an admixed population.

@@ -82,13 +82,17 @@ for (pop in c(unique(fam2$`Super Population`), "AFR2")) {
     )
   })
 
-  qplot(data = bind_rows(all_res), n_block, cost, color = method, size = method) +
+  all_res2 <- na.omit(bind_rows(all_res))
+
+  qplot(data = all_res2, n_block, cost, color = method, size = method) +
     scale_size_manual(values = c(snp_ldsplit = 1, ldetect = 3)) +
+    scale_color_manual(values = c(snp_ldsplit = "#00BFC4", ldetect = "#F8766D")) +  # scales::hue_pal()(2)
     theme_bw(12) +
-    scale_x_continuous(breaks = 0:20 * 10, minor_breaks = 0:100 * 2) +
+    scale_x_continuous(breaks = 0:100 * 10, minor_breaks = 0:500 * 2) +
     scale_y_log10() +
     facet_wrap(~ chr, nrow = 8, scales = "free_x") +
     theme(legend.position = "top") +
     labs(y = "Sum of squared correlations outside blocks (log-scale)", x = "Number of blocks")
+
   ggsave(paste0("figures/cost_split_", pop, ".pdf"), width = 13, height = 13)
 }
