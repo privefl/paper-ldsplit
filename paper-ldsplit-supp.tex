@@ -141,6 +141,28 @@ The cost is defined as the sum of squared correlations $r^2$ between variants fr
 \FloatBarrier
 \clearpage
 
+\subsection*{Comparison with recombination rates}
+
+\vspace*{3em}
+
+\begin{figure}[h]
+	\centerline{\includegraphics[width=0.9\textwidth]{compare_recomb_chr22.pdf}}
+	\caption{Recombination rates for chromosome 22 in the CEU population, as provided in \cite{spence2019inference}. Blue dotted lines correspond to boundaries of 22 blocks obtained using \texttt{snp\_ldsplit}, while red dotted lines correspond to the ones from \texttt{ldetect}.}
+	\label{fig:bounds-chr22}
+\end{figure}
+
+\begin{figure}[h]
+	\centerline{\includegraphics[width=0.95\textwidth]{compare_recomb_chr1.pdf}}
+	\caption{Recombination rates for chromosome 1 in the CEU population, as provided in \cite{spence2019inference}. Blue dotted lines correspond to boundaries of 133 blocks obtained using \texttt{snp\_ldsplit}, while red dotted lines correspond to the ones from \texttt{ldetect}.}
+	\label{fig:bounds-chr1}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\FloatBarrier
+\clearpage
+
 \subsection*{Application to LD score regression}
 
 LD score regression is a method to estimate confounding and SNP heritability from summary statistics \cite[]{bulik2015ld}. By default, it uses the delete-a-group jackknife to compute standard errors associated with these two estimates by splitting the genome evenly into 200 blocks of contiguous variants.
@@ -162,7 +184,8 @@ Standard errors using nearly-independent blocks tend to be slightly larger, espe
 
 \begin{figure}[p]
 	\centerline{\includegraphics[width=0.95\textwidth]{compare_new_ldsc}}
-	\caption{LD score regression results for 245 phenotypes, when using either nearly-independent blocks for jackknifing, or blocks with some LD between neighboring blocks.}
+	\caption{LD score regression results for 245 phenotypes, when using either nearly-independent blocks for jackknifing, or blocks with some LD between neighboring blocks.
+	``SE'' means standard error, and are represented using a log scale.}
 	\label{fig:newLDSC}
 \end{figure}
 

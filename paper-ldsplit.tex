@@ -130,7 +130,9 @@ As input, function \texttt{snp\_ldsplit} uses a correlation matrix in sparse for
 Then, to run \texttt{snp\_ldsplit} using a correlation matrix for 102,451 variants from chromosome 1, it takes < 6 minutes on a laptop to find the optimal split in $K$ blocks (for all $K=1$ to 133) with a bounded block size between 500 and 10,000 variants.
 Then, the user can choose the desired number of blocks, which is a compromise between having more (smaller) blocks with a higher overall cost (LD between blocks), and having less (larger) blocks with a smaller cost.
 For chromosome 1 and Europeans, ldetect report 133 LD blocks \cite[]{berisa2016approximately}, however we find that they can hardly be considered truly independent given the high cost (10,600) of the corresponding split (Figure \ref{fig:costEUR}).
-When splitting chromosome 1 for Europeans using the optimal algorithm we propose here, it can be split in 39 blocks at a cost of 1, in 65 blocks at a cost of 10, and in 133 blocks at a cost of 296 (Figure \ref{fig:costEUR}). Similar results are found for other chromosomes, and for Africans and Asians, however splitting the LD from admixed Americans comes at a high cost (Figures \ref{fig:costEAS}-\ref{fig:costAMR})
+When splitting chromosome 1 for Europeans using the optimal algorithm we propose here, it can be split in 39 blocks at a cost of 1, in 65 blocks at a cost of 10, and in 133 blocks at a cost of 296 (Figure \ref{fig:costEUR}). 
+Similar results are found for other chromosomes, and for Africans and Asians, however splitting the LD from admixed Americans comes at a high cost (Figures \ref{fig:costEAS}-\ref{fig:costAMR}).
+Both methods largely pick block boundaries at recombination hotspots (Figures \ref{fig:bounds-chr22} and \ref{fig:bounds-chr1}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
