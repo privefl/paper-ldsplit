@@ -71,7 +71,26 @@
 
 \section*{Supplementary Materials}
 
-\vspace{5em}
+\vspace{3em}
+
+\subsection*{Parameters of \texttt{snp\_ldsplit}}
+
+Function \texttt{snp\_ldsplit} has five parameters:
+\begin{itemize}
+	\item \texttt{corr}: A sparse correlation matrix, usually, the output of \texttt{snp\_cor}.
+	\item \texttt{thr\_r2}: Threshold under which squared correlations are ignored. This is useful to avoid counting noise, which should give clearer patterns of cost vs.\ number of blocks. It is therefore possible to have a splitting cost of 0 (a threshold of 5\% is used in this paper). If this parameter is used, then \texttt{corr} can be computed using the same parameter in \texttt{snp\_cor} (to increase the sparsity of the resulting matrix).
+	\item \texttt{min\_size}: Minimum number of variants in each block. This is used not to have a disproportionate number of small blocks.
+	\item \texttt{max\_size}: Maximum number of variants in each block. This is used not have blocks that are too large, e.g.\ to limit computational and memory requirements of some operations. For some long-range LD regions, it might be needed to allow for large blocks.
+	\item \texttt{max\_K}: Maximum number of blocks to consider. All optimal solutions for $K$ from 1 to \texttt{max\_K} will we returned. Some of these $K$ might not have any corresponding solution due to the limitations in size of the blocks. For example, splitting 10,000 variants in blocks with at least 500 and at most 2000 variants implies that there are at least 5 and at most 20 blocks. Then, the choice of K depends on the application, but a simple solution is to choose the largest K for which the cost is lower than some threshold (see e.g.\ figure \ref{fig:costLDSC}).
+	
+\end{itemize}
+
+[COPY THIS TO THE DOCUMENTATION]
+
+
+
+\FloatBarrier
+\clearpage
 
 \subsection*{Procedure to compute optimal costs}
 
@@ -180,7 +199,8 @@ This results in a total of 242 nearly-independent blocks. We also define another
 
 We use the implementation of LD score regression from R package bigsnpr (function \texttt{snp\_ldsc}, \cite{prive2017efficient}), and modify it to allow for using the jackknife with groups of different sizes \cite[]{busing1999delete}. 
 For 245 phenotypes defined elsewhere \cite[]{prive2021high}, we run LD score regression either using the new set of nearly-independent blocks, or with the other set with LD between neighboring blocks.  
-Standard errors using nearly-independent blocks tend to be slightly larger, especially for phenotypes with large associations in the HLA region, with e.g.\ a standard error of the SNP heritability of [COMPLETE AFTER EXPORT]. [TODO: FINISH]
+Standard errors using nearly-independent blocks tend to be larger than when there is substantial LD between blocks, especially for phenotypes with large associations in the HLA region (a long-range LD region), with e.g.\ standard errors of the SNP heritability estimate of 0.00378 vs.\ 0.00252 for lupus (phecode 695.4), 0.0302 vs.\ 0.0205 for celiac disease (557.1), 0.00420 vs.\ 0.00304 for thyrotoxicosis (242), 0.00313 vs.\ 0.00230 for sicca syndrome (709.2), and 0.00385 vs.\ 0.00294 for hematuria (593).
+ [TODO: FINISH]
 
 \begin{figure}[p]
 	\centerline{\includegraphics[width=0.95\textwidth]{compare_new_ldsc}}

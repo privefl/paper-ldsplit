@@ -116,10 +116,11 @@ These sub-problems can be solved efficiently by starting with $k=1$ and with $i$
 Once all costs in the $C$ matrix have been computed, and corresponding splits $j$ have been recorded, the optimal split can be reconstructed from $C(1, K)$, where $K$ is the number of blocks desired.
 To efficiently compute $E(i,j) = \sum_{p=i}^j \sum_{q=j+1}^m R(p, q)^2$, where $m$ is the number of variants and $R(p, q)$ is the correlation between variants $p$ and $q$, we first compute the matrix $L$ defined as $L(i, j) = \sum_{q=j+1}^m R(i, q)^2$. Matrices $L$ and $E$ are sparse.
 $E$ is the largest matrix and requires approximately $m \times (\text{max\_size} - \text{min\_size}) \times 4$ bytes to be stored efficiently. For $m$=100,000, min\_size=500 and max\_size=10,000, this represents 3.5 GB.
+A description of the parameters of \texttt{snp\_ldsplit} implementing this method can be found in the supplementary materials.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\textwidth]{illu.png}
+	\includegraphics[width=0.78\textwidth]{illu.png}
 	\caption{Illustration of sub-problems solved by the algorithm using a small LD matrix. The cost of separating the region starting at variant $i$ in $k$ blocks exactly, $C(i, k)$, is broken down in two: the error $E(i,j)$, the sum of all squared correlations between variants from block $(i,j)$ and variants from all the later blocks, and the cost of separating the rest starting at $(j+1)$ using $(k-1)$ blocks. The variant $j$ at which the split occurs is chosen so that the cost $\left(E(i, j) + C(j + 1, k - 1)\right)$ is minimized. The optimal split is highlighted in red here.}
 	\label{fig:illu}
 \end{figure}
@@ -133,17 +134,18 @@ For chromosome 1 and Europeans, ldetect report 133 LD blocks \cite[]{berisa2016a
 When splitting chromosome 1 for Europeans using the optimal algorithm we propose here, it can be split in 39 blocks at a cost of 1, in 65 blocks at a cost of 10, and in 133 blocks at a cost of 296 (Figure \ref{fig:costEUR}). 
 Similar results are found for other chromosomes, and for Africans and Asians, however splitting the LD from admixed Americans comes at a high cost (Figures \ref{fig:costEAS}-\ref{fig:costAMR}).
 Both methods largely pick block boundaries at recombination hotspots (Figures \ref{fig:bounds-chr22} and \ref{fig:bounds-chr1}).
+We also provide an application to LD score regression in supplementary section ``Application to LD score regression'', where we show that standard errors for the SNP heritability using nearly-independent blocks tend to be larger than when there is substantial LD between blocks, especially for phenotypes with large associations in the HLA region (a long-range LD region).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %\clearpage
 %\vspace*{5em}
 
-\section*{Software and code availability}
+\section*{Software, code and data availability}
 
 The newest version of R package bigsnpr can be installed from GitHub (see \url{https://github.com/privefl/bigsnpr}).
 All code used for this paper is available at \url{https://github.com/privefl/paper-ldsplit/tree/master/code}.
-
+LD score regression results are available at \url{https://github.com/privefl/paper-ldsplit/tree/main/ldsc_blocks}, with a description of the 245 phenotypes used at \url{https://github.com/privefl/UKBB-PGS/blob/main/phenotype-description.xlsx}.
 
 %\section*{Acknowledgements}
 

@@ -85,15 +85,12 @@ all_res2 <-
   tidyr::pivot_wider(names_from = c(Var1, Var2))
 
 all_res2 %>%
-  filter(good_h2 != bad_h2)
-
-all_res2 %>%
   arrange(desc(good_h2)) %>%
   select(name, starts_with("good_")) %>%
   print()
 
 all_res2 %>%
-  arrange(desc(abs(log(good_h2_se / normal_h2_se)))) %>%
+  arrange(desc(abs(log(good_h2_se / bad_h2_se)))) %>%
   select(name, ends_with("_h2_se")) %>%
   print()
 
