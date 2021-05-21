@@ -1,6 +1,8 @@
 library(bigsnpr)
 library(dplyr)
 
+stopifnot(packageVersion("bigsnpr") >= package_version("1.7.3"))
+
 map_rds <- runonce::download_file(
   "https://www.dropbox.com/s/hdui60p9ohyhvv5/map_blocks.rds?dl=1",
   dir = "tmp-data")
