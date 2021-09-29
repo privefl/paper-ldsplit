@@ -3,7 +3,7 @@
 .RData
 .Ruserdata
 *.Rproj
-
+*.sty
 *.bbl
 *.blg
 *.dvi
@@ -17,3 +17,7 @@ natbib.*
 tmp-data/
 map_blocks.rds
 results_ldsc/
+OUP_First_SBk_Bot_8401.eps
+bioinfo.cls
+crop.cfg
+plain.bst
